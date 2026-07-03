@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rust Game Hub</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: white;
+
+      background: url("https://images.unsplash.com/photo-1501785888041-af3ef285b470") no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+      position: relative;
+      cursor: default;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: -1;
+    }
+
+    @keyframes moveBg {
+      0% { transform: translate(0,0) rotate(0deg); }
+      50% { transform: translate(-5%,5%) rotate(180deg); }
+      100% { transform: translate(0,0) rotate(360deg); }
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      padding: 32px;
+      box-sizing: border-box;
+      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+    }
+
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .brand h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    .brand p {
+      margin-top: 14px;
+      color: #b2c1d5;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(120px, 1fr));
+      gap: 16px;
+      width: 100%;
+      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .stat {
+      background: transparent;
+      border: none;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat small {
+      color: #8fa3c1;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .stat strong {
+      font-size: 1.5rem;
+      display: block;
+    }
+
+    .hero {
+      margin-top: 36px;
+      padding: 26px;
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero p {
+      margin: 0;
+      line-height: 1.8;
+      color: #c9d4e8;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 26px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 18px 40px rgba(56, 189, 248, 0.24);
+    }
+
+    .message {
+      margin-top: 24px;
+      padding: 22px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 70px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #dbe6f3;
+    }
+
+    .section {
+      margin-top: 40px;
+    }
+
+    .section h2 {
+      margin: 0 0 16px 0;
+      font-size: 1.3rem;
+    }
+
+    .section .card {
+      padding: 20px;
+      border-radius: 18px;
+      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-top: 12px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeIn 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card p {
+      margin: 5px 0;
+      color: #c9d4e8;
+    }
+
+    .card {
+      transition: 0.3s ease;
+      border-radius: 18px;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .game-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .game-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .game-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .game-info {
+      padding: 12px;
+    }
+
+    .game-info h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .game-info p {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      color: #b8c7dd;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #8f9fba;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 760px) {
+      .stats { grid-template-columns: 1fr; }
+      .top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="top">
+      <div class="brand">
+        <h1>Rust Game Hub</h1>
+        <p>Простой учебный сайт по игре Rust. Современный адаптивный дизайн, кнопки с анимацией и минималистичная структура на одном HTML-файле.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><small>Режим</small><strong>Выживание</strong></div>
+        <div class="stat"><small>Игроков</small><strong>1,250+</strong></div>
+        <div class="stat"><small>Сервер</small><strong>Онлайн</strong></div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <p>Rust — игра, где вы собираете ресурсы, строите базы и сражаетесь со своими врагами. Этот сайт показывает, как может выглядеть стильная страница новичка без фреймворков.</p>
+      <div class="buttons">
+        <button class="btn" id="factBtn">Случайный факт</button>
+        <button class="btn" id="textBtn">Поменять текст</button>
+      </div>
+      <div class="message" id="message">Нажми кнопку, чтобы увидеть подсказку.</div>
+    </section>
+
+    <div class="section">
+      <h2>🎮 Похожие игры</h2>
+      <div class="game-grid">
+        <div class="game-card">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/252490/header.jpg" alt="Rust">
+          <div class="game-info">
+            <h3>Rust</h3>
+            <p>Выживание • PvP • Открытый мир</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg" alt="CS2">
+          <div class="game-info">
+            <h3>CS2</h3>
+            <p>Шутер • Онлайн • Командная игра</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg" alt="Dota 2">
+          <div class="game-info">
+            <h3>Dota 2</h3>
+            <p>MOBA • Тактика • Киберспорт</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section" id="news">
+      <h2>📰 Новости</h2>
+      <div class="card">
+        <h3>🔫 Новое оружие</h3>
+        <p>Добавлен переработанный урон и баланс PvP.</p>
+      </div>
+      <div class="card">
+        <h3>🛠 Обновление серверов</h3>
+        <p>Серверы стали стабильнее и меньше лагов.</p>
+      </div>
+    </section>
+
+    <section class="section" id="servers">
+      <h2>🧭 Сервера</h2>
+      <div class="card">
+        <h3>EU Main #1</h3>
+        <p>Онлайн: 120/200</p>
+        <p>Режим: PvP</p>
+      </div>
+      <div class="card">
+        <h3>RU Hardcore</h3>
+        <p>Онлайн: 80/150</p>
+        <p>Режим: Хардкор</p>
+      </div>
+    </section>
+
+    <footer>Rust Game Hub © 2026 — учебный проект</footer>
+  </main>
+
+  <script>
+    const facts = [
+      'Ты можешь потерять всё за 1 рейд 😈',
+      'Базы строят неделями',
+      'Игроки создают кланы',
+      'Самый опасный враг — человек'
+    ];
+
+    let lastFact = '';
+    const factBtn = document.getElementById('factBtn');
+    const textBtn = document.getElementById('textBtn');
+    const message = document.getElementById('message');
+
+    function randomFact() {
+      let fact;
+      do { fact = facts[Math.floor(Math.random() * facts.length)]; } while (fact === lastFact);
+      lastFact = fact;
+      return fact;
+    }
+
+    factBtn.addEventListener('click', () => {
+      message.textContent = randomFact();
+    });
+
+    textBtn.addEventListener('click', () => {
+      if (message.textContent.includes('подсказку')) {
+        message.textContent = 'Добро пожаловать в Rust Game Hub!';
+      } else {
+        message.textContent = 'Нажми кнопку, чтобы увидеть новую подсказку.';
+      }
+    });
+  </script>
+</body>
+</html>
